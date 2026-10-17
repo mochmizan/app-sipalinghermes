@@ -1,0 +1,24 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: slackgateway
+  group_by: ['alertname', 'severity']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+receivers:
+  - name: slackgateway
+    webhook_configs:
+      # Dedicated Alertmanager endpoint from https://slackgateway.ssnai.org/openapi.json:
+      # accepts native Alertmanager webhook JSON, auth via Authorization: Bearer <token>
+      # or X-Api-Key: <token>. 200 {"ok":true,...} = delivered to Slack.
+      #
+      # ⚠ TOKEN IS A PLACEHOLDER HERE — never commit the real key. On the VPS this file
+      # is rendered with the real ALERTMANAGER_API_KEY (envsubst from /opt/mizan/monitoring/.env)
+      # into a VPS-local config; the repo copy must always grep clean for the key.
+      - url: 'https://slackgateway.ssnai.org/v1/alerts/alertmanager'
+        send_resolved: true
+        http_config:
+          bearer_token: 'PLACEHOLDER_ALERTMANAGER_API_KEY'

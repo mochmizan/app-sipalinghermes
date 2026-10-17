@@ -1,0 +1,28 @@
+groups:
+  - name: mizan-core
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Scrape target {{ $labels.instance }} ({{ $labels.job }}) is down"
+
+      - alert: HermesAppDown
+        expr: up{job="hermes-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Hermes app /metrics unreachable"
+
+      # Tune: fires if > 0.5 signups/sec over 5m sustained 5m (~150 in 5m window)
+      # — deliberately aggressive; adjust threshold to expected launch traffic.
+      - alert: WaitinglistSpike
+        expr: rate(hermes_waitinglist_signups_total[5m]) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Waitinglist signup rate high: {{ $value | humanize }}/s"

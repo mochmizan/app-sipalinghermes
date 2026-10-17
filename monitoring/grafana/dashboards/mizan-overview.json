@@ -1,0 +1,575 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "tags": [
+    "mizan"
+  ],
+  "timezone": "browser",
+  "title": "Mizan Overview",
+  "uid": "mizan-overview",
+  "version": 1,
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "panels": [
+    {
+      "id": 100,
+      "type": "row",
+      "title": "Hermes App",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Request rate by route",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "targets": [
+        {
+          "expr": "sum by (route) (rate(hermes_http_requests_total[5m]))",
+          "legendFormat": "{{route}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Waitinglist signups (rate)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "targets": [
+        {
+          "expr": "rate(hermes_waitinglist_signups_total[5m])",
+          "legendFormat": "signups/s"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Waitinglist signups (total)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "targets": [
+        {
+          "expr": "hermes_waitinglist_signups_total",
+          "legendFormat": "total"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Logins & registrations (rate)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "targets": [
+        {
+          "expr": "rate(hermes_logins_total[5m])",
+          "legendFormat": "logins"
+        },
+        {
+          "expr": "rate(hermes_registrations_total[5m])",
+          "legendFormat": "registrations"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "HTTP errors (5xx rate)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(hermes_http_requests_total{status=\"500\"}[5m]))",
+          "legendFormat": "5xx/s"
+        }
+      ]
+    },
+    {
+      "id": 200,
+      "type": "row",
+      "title": "Host (node-exporter)",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      }
+    },
+    {
+      "id": 6,
+      "type": "gauge",
+      "title": "Host CPU",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 18
+      },
+      "targets": [
+        {
+          "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "cpu%"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "gauge",
+      "title": "Host memory used",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 18
+      },
+      "targets": [
+        {
+          "expr": "100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)",
+          "legendFormat": "mem%"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "gauge",
+      "title": "Root disk used",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 18
+      },
+      "targets": [
+        {
+          "expr": "100 * (1 - node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"tmpfs\"} / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"tmpfs\"})",
+          "legendFormat": "disk%"
+        }
+      ]
+    },
+    {
+      "id": 300,
+      "type": "row",
+      "title": "Targets Health",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      }
+    },
+    {
+      "id": 9,
+      "type": "stat",
+      "title": "Targets up",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 26
+      },
+      "targets": [
+        {
+          "expr": "sum(up)",
+          "legendFormat": "up"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "type": "table",
+      "title": "Per-target up status",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 26
+      },
+      "targets": [
+        {
+          "expr": "up",
+          "format": "table",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 400,
+      "type": "row",
+      "title": "PostHog product analytics (live via Query API)",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "collapsed": false,
+      "datasource": null,
+      "targets": []
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "PostHog event volume",
+      "description": "Hourly event counts from PostHog Query API; follows dashboard time range.",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 33
+      },
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "mizan-posthog"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "https://app.posthog.com/api/projects/656630/query/",
+          "url_options": {
+            "method": "POST",
+            "data": "{\"query\":{\"kind\":\"HogQLQuery\",\"query\":\"SELECT toStartOfHour(timestamp) AS t, count() AS c FROM events WHERE timestamp >= '${__timeFrom:date:iso}' AND timestamp <= '${__timeTo:date:iso}' GROUP BY t ORDER BY t\"},\"name\":\"ph-event-volume\"}"
+          },
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "mizan-posthog"
+          },
+          "parser": "backend",
+          "root_selector": "results",
+          "columns": [
+            {
+              "selector": "0",
+              "text": "time",
+              "type": "string"
+            },
+            {
+              "selector": "1",
+              "text": "count",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "targetField": "time",
+                "destinationType": "time"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "type": "stat",
+      "title": "Waitinglist submits (PostHog)",
+      "description": "Count of waitinglist_submit_success in dashboard range.",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 33
+      },
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "mizan-posthog"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "https://app.posthog.com/api/projects/656630/query/",
+          "url_options": {
+            "method": "POST",
+            "data": "{\"query\":{\"kind\":\"HogQLQuery\",\"query\":\"SELECT count() AS c FROM events WHERE event = 'waitinglist_submit_success' AND timestamp >= '${__timeFrom:date:iso}' AND timestamp <= '${__timeTo:date:iso}'\"},\"name\":\"ph-wl-submits\"}"
+          },
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "mizan-posthog"
+          },
+          "parser": "backend",
+          "root_selector": "results",
+          "columns": [
+            {
+              "selector": "0",
+              "text": "submits",
+              "type": "number"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "type": "table",
+      "title": "Top PostHog events",
+      "description": "Top 20 events in dashboard range.",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 41
+      },
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "mizan-posthog"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "https://app.posthog.com/api/projects/656630/query/",
+          "url_options": {
+            "method": "POST",
+            "data": "{\"query\":{\"kind\":\"HogQLQuery\",\"query\":\"SELECT event, count() AS c FROM events WHERE timestamp >= '${__timeFrom:date:iso}' AND timestamp <= '${__timeTo:date:iso}' GROUP BY event ORDER BY c DESC LIMIT 20\"},\"name\":\"ph-top-events\"}"
+          },
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "mizan-posthog"
+          },
+          "parser": "backend",
+          "root_selector": "results",
+          "columns": [
+            {
+              "selector": "0",
+              "text": "event",
+              "type": "string"
+            },
+            {
+              "selector": "1",
+              "text": "count",
+              "type": "number"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "type": "table",
+      "title": "Waitinglist funnel, 7d (PostHog)",
+      "description": "FunnelsQuery: waitinglist_submit_success → playbook_download → referral_copied. Empty until traffic flows.",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 41
+      },
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "mizan-posthog"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "https://app.posthog.com/api/projects/656630/query/",
+          "url_options": {
+            "method": "POST",
+            "data": "{\"query\":{\"kind\":\"FunnelsQuery\",\"dateRange\":{\"date_from\":\"-7d\"},\"series\":[{\"kind\":\"EventsNode\",\"event\":\"waitinglist_submit_success\"},{\"kind\":\"EventsNode\",\"event\":\"playbook_download\"},{\"kind\":\"EventsNode\",\"event\":\"referral_copied\"}]},\"name\":\"ph-wl-funnel\"}"
+          },
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "mizan-posthog"
+          },
+          "parser": "backend",
+          "root_selector": "results",
+          "columns": [
+            {
+              "selector": "name",
+              "text": "step",
+              "type": "string"
+            },
+            {
+              "selector": "count",
+              "text": "count",
+              "type": "number"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 500,
+      "type": "row",
+      "title": "Agent runtime",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 49
+      }
+    },
+    {
+      "id": 18,
+      "type": "stat",
+      "title": "Agent queue depth",
+      "description": "hermes_agent_queue_depth — queued jobs as of the last runtime tick.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 50
+      },
+      "targets": [
+        {
+          "expr": "hermes_agent_queue_depth",
+          "legendFormat": "queued"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "type": "table",
+      "title": "Agent jobs, 24h by type/status",
+      "description": "increase(hermes_agent_jobs_total[24h]) grouped by job type and status.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 50
+      },
+      "targets": [
+        {
+          "expr": "sum by (type, status) (increase(hermes_agent_jobs_total[24h]))",
+          "format": "table",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "type": "timeseries",
+      "title": "Agent LLM latency (avg)",
+      "description": "Average LLM call duration from the hermes_agent_llm_latency_seconds histogram (_sum / _count).",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 50
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(hermes_agent_llm_latency_seconds_sum[5m])) / sum(rate(hermes_agent_llm_latency_seconds_count[5m]))",
+          "legendFormat": "avg seconds"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "type": "stat",
+      "title": "Agent LLM errors (total)",
+      "description": "sum(hermes_agent_llm_errors_total) — closed error-code set only.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mizan-prom"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 50
+      },
+      "targets": [
+        {
+          "expr": "sum(hermes_agent_llm_errors_total)",
+          "legendFormat": "errors"
+        }
+      ]
+    }
+  ]
+}

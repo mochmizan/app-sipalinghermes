@@ -1,0 +1,110 @@
+# Mizan monitoring stack — Phase A config for the shared VPS (Phase B deploys it).
+# HARD RULE: zero interference with the friend's fairshare stack (which owns host
+# port 3000 and network fairshare_default). Every service here is mizan- prefixed,
+# on its own network, and binds host ports to 127.0.0.1 only.
+name: mizan-mon
+
+services:
+  mizan-app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: mizan-app
+    ports:
+      - "127.0.0.1:3002:5173"   # app :5173 inside; 3002 on loopback host (3000 is the friend's)
+    environment:
+      - PORT=5173
+      # Placeholder — override in monitoring/.env before deploy.
+      - POSTHOG_API_KEY=${POSTHOG_API_KEY:-phc_placeholder_set_in_env}
+      # Hermes agent LLM (OpenAI-compatible). Empty key = runtime status
+      # `unconfig` and chat 503 `llm_unconfigured` by design (no fallback model).
+      # Real values live in monitoring/.env (chmod 600) only, never in git.
+      - HERMES_LLM_API_KEY=${HERMES_LLM_API_KEY:-}
+      - HERMES_LLM_BASE_URL=${HERMES_LLM_BASE_URL:-}
+      - HERMES_LLM_MODEL=${HERMES_LLM_MODEL:-}
+      - HERMES_DEMO_ACCOUNTS=${HERMES_DEMO_ACCOUNTS:-1}
+    volumes:
+      - mizan-app-data:/app/data
+    networks:
+      - mizan-mon-net
+    restart: unless-stopped
+
+  mizan-prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: mizan-prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./alerts.yml:/etc/prometheus/alerts.yml:ro
+      - mizan-prom-data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=15d
+    networks:
+      - mizan-mon-net
+    restart: unless-stopped
+
+  mizan-grafana:
+    # Infinity 4.1.1 requires Grafana >=11.6.11 (its module needs react/jsx-runtime;
+    # 11.1.0 serves a 404 for it and PostHog panels break). Minor tag floats within 11.6.x.
+    image: grafana/grafana:11.6
+    container_name: mizan-grafana
+    ports:
+      - "127.0.0.1:3001:3000"   # host 3000 belongs to the friend's fairshare app
+    environment:
+      # Install the Infinity datasource plugin (for later PostHog Query API panels).
+      - GF_INSTALL_PLUGINS=yesoreyeram-infinity-datasource
+      # Override GF_ADMIN_USER / GF_ADMIN_PASSWORD in monitoring/.env before deploy!
+      - GF_SECURITY_ADMIN_USER=${GF_ADMIN_USER:-mizan}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_ADMIN_PASSWORD:-change-me}
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - mizan-grafana-data:/var/lib/grafana
+    networks:
+      - mizan-mon-net
+    restart: unless-stopped
+
+  mizan-alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: mizan-alertmanager
+    ports:
+      - "127.0.0.1:9093:9093"
+    volumes:
+      # VPS-only: alertmanager.yml.rendered (token injected via envsubst) is mounted instead.
+      - ./alertmanager.yml.rendered:/etc/alertmanager/alertmanager.yml:ro
+      - mizan-alert-data:/alertmanager
+    environment:
+      # Substituted into alertmanager.yml webhook bearer_token (empty = fail closed).
+      - ALERTMANAGER_API_KEY=${ALERTMANAGER_API_KEY:-}
+    networks:
+      - mizan-mon-net
+    restart: unless-stopped
+
+  mizan-node-exporter:
+    image: prom/node-exporter:v1.8.1
+    container_name: mizan-node-exporter
+    ports:
+      - "127.0.0.1:9100:9100"
+    volumes:
+      - /:/rootfs:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+    command:
+      - --path.rootfs=/rootfs
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+    pid: host
+    networks:
+      - mizan-mon-net
+    restart: unless-stopped
+
+networks:
+  mizan-mon-net:
+
+volumes:
+  mizan-prom-data:
+  mizan-grafana-data:
+  mizan-alert-data:
+  mizan-app-data:

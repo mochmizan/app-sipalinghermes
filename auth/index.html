@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Masuk atau daftar ke Si Paling Hermes" />
+  <title>Masuk atau Daftar — Si Paling Hermes</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="/posthog-init.js"></script>
+</head>
+<body class="auth-page">
+  <header class="site-header auth-header">
+    <div class="header-inner">
+      <a class="wordmark" href="/" aria-label="Kembali ke landing page"><span class="wordmark-mark">H</span>Si Paling Hermes</a>
+      <a class="pill pill-light" href="/"><span class="cta-prefix">Kembali ke </span>Beranda</a>
+    </div>
+  </header>
+  <main class="auth-shell">
+    <section class="auth-story reveal">
+      <span class="eyebrow">Workspace pribadi untuk agent-mu</span>
+      <h1>Masuk sekali.<br /><span>Atur semuanya.</span></h1>
+      <p>Kelola Hermes Agent, akun social media, model AI, policy, dan status action dari satu dashboard.</p>
+      <div class="auth-trust-list">
+        <div><span>01</span><p>Satu runtime terpisah untuk setiap akun.</p></div>
+        <div><span>02</span><p>Credential Sipalinghermes tetap dikelola server-side.</p></div>
+        <div><span>03</span><p>Status dan kontrol agent selalu terlihat.</p></div>
+      </div>
+      <div style="margin-top:30px">
+        <a class="pill pill-dark" href="/lead-magnet/">Waitinglist & Free Trial 30 Hari ↗</a>
+      </div>
+    </section>
+    <section class="auth-card reveal delay-1" aria-label="Form autentikasi">
+      <div style="background:var(--green);border:1px solid rgba(21,128,61,.3);border-radius:18px;padding:16px;margin-bottom:20px;text-align:left">
+        <div style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:11.5px;color:var(--green-strong);text-transform:uppercase;letter-spacing:.05em">
+          <span>🔥 Early Access Batch 1</span>
+        </div>
+        <p style="font-size:12px;color:var(--ink);margin:8px 0 14px;line-height:1.45">
+          Akses pendaftaran baru saat ini dibuka melalui <strong>Waitinglist</strong>. Amankan slotmu dan dapatkan <strong>Free Trial 30 Hari & Blueprint Hermes!</strong>
+        </p>
+        <a href="/lead-magnet/" class="pill pill-dark" style="width:100%;justify-content:center;font-size:12px">
+          👉 Waitinglist & Free Trial 30 Hari ↗
+        </a>
+      </div>
+      <div class="auth-tabs" role="tablist" aria-label="Pilihan autentikasi">
+        <button class="auth-tab active" type="button" data-auth-tab="login" role="tab" aria-selected="true">Masuk</button>
+        <button class="auth-tab" type="button" data-auth-tab="register" role="tab" aria-selected="false">Daftar</button>
+      </div>
+      <div class="auth-heading"><p class="section-kicker">Akses workspace</p><h2 data-auth-title>Selamat datang kembali.</h2><p data-auth-copy>Gunakan nama, email, atau nomor WhatsApp yang terdaftar untuk masuk.</p></div>
+      <form class="auth-form" data-auth-form="login">
+        <div class="form-field"><label for="login-identity">Nama, email, atau nomor WhatsApp</label><input id="login-identity" name="identity" type="text" placeholder="Contoh: Nadia / nadia@email.com / 0812…" autocomplete="username" required /></div>
+        <div class="form-field"><div class="field-label-row"><label for="login-password">Password</label><a href="#" class="text-link" data-demo-forgot>Lupa password?</a></div><input id="login-password" name="password" type="password" placeholder="Masukkan password" autocomplete="current-password" minlength="8" required /></div>
+        <label class="check-row"><input type="checkbox" name="remember" /> <span>Ingat saya di perangkat ini</span></label>
+        <button class="pill pill-dark auth-submit" type="submit">Masuk ke Dashboard <span aria-hidden="true">↗</span></button>
+        <p class="auth-form-note">Belum punya akun? <button type="button" class="inline-button" data-auth-tab="register">Daftar sekarang</button></p>
+      </form>
+      <form class="auth-form" data-auth-form="register" hidden>
+        <div class="auth-form-grid"><div class="form-field"><label for="register-name">Nama lengkap</label><input id="register-name" name="name" type="text" placeholder="Nama kamu" autocomplete="name" required /></div><div class="form-field"><label for="register-whatsapp">Nomor WhatsApp</label><input id="register-whatsapp" name="whatsapp" type="tel" placeholder="0812 3456 7890" autocomplete="tel" inputmode="tel" required /></div></div>
+        <div class="form-field"><label for="register-email">Email</label><input id="register-email" name="email" type="email" placeholder="nama@email.com" autocomplete="email" required /></div>
+        <div class="auth-form-grid"><div class="form-field"><label for="register-password">Password</label><input id="register-password" name="password" type="password" placeholder="Minimal 8 karakter" autocomplete="new-password" minlength="8" required /></div><div class="form-field"><label for="register-password-confirm">Ulangi password</label><input id="register-password-confirm" name="passwordConfirm" type="password" placeholder="Ulangi password" autocomplete="new-password" minlength="8" required /></div></div>
+        <label class="check-row"><input type="checkbox" name="terms" required /> <span>Saya setuju dengan penggunaan wajar dan kebijakan data demo.</span></label>
+        <button class="pill pill-dark auth-submit" type="submit">Buat Akun & Lanjut <span aria-hidden="true">↗</span></button>
+        <p class="auth-form-note">Sudah punya akun? <button type="button" class="inline-button" data-auth-tab="login">Masuk di sini</button></p>
+      </form>
+      <div class="sample-access" id="demo-accounts" hidden aria-label="Sample access untuk testing">
+        <div class="sample-access-head"><span>Sample access</span><span class="tag neutral">Lokal</span></div>
+        <p>Gunakan kredensial demo berikut untuk menguji role user dan admin.</p>
+        <div class="sample-account"><div><strong>User Dashboard</strong><span>user@demo.hermes</span><small>UserDemo123!</small></div><button type="button" class="pill pill-light" data-demo-login="user">Pakai user</button></div>
+        <div class="sample-account"><div><strong>Admin Dashboard</strong><span>admin@demo.hermes</span><small>AdminDemo123!</small></div><button type="button" class="pill pill-light" data-demo-login="admin">Pakai admin</button></div>
+      </div>
+      <p class="auth-safe-note"><span>⌁</span> Ini adalah alur demo lokal. Jangan gunakan password produksi.</p>
+    </section>
+  </main>
+  <script src="/app.js" defer></script>
+
+</body>
+</html>

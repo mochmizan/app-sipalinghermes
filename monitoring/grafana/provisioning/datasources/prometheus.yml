@@ -1,0 +1,9 @@
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    uid: mizan-prom
+    type: prometheus
+    access: proxy
+    url: http://mizan-prometheus:9090
+    isDefault: true
+    editable: false

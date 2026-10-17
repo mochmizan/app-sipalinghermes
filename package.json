@@ -1,0 +1,22 @@
+{
+  "name": "si-paling-hermes",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs",
+    "dev:frontend": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "posthog-node": "^4.0.0",
+    "prom-client": "^15.1.3"
+  },
+  "devDependencies": {
+    "vite": "^7.1.5"
+  }
+}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="id">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="Admin Dashboard Si Paling Hermes" /><title>Admin Dashboard — Si Paling Hermes</title><link rel="stylesheet" href="/styles.css" /><script src="/posthog-init.js"></script></head>
+<body data-required-role="admin">
+<div class="app-shell">
+  <aside class="app-sidebar">
+    <a class="wordmark" href="/"><span class="wordmark-mark">H</span>Si Paling Hermes</a>
+    <p class="side-label">Admin control plane</p>
+    <nav aria-label="Admin Dashboard">
+      <a class="side-link active" href="/admin/"><span class="side-icon">⌂</span>Dashboard</a>
+      <a class="side-link" href="#waitinglist"><span class="side-icon">📋</span>Waiting List Leads<span class="side-badge" id="admin-wl-badge">Live</span></a>
+      <a class="side-link" href="#users"><span class="side-icon">◎</span>Users & Agents<span class="side-badge" id="admin-agents-badge" hidden></span></a>
+      <a class="side-link" href="#repliz"><span class="side-icon">↗</span>Repliz Integration</a>
+      <a class="side-link" href="#capabilities"><span class="side-icon">◇</span>Platform & Capabilities</a>
+      <a class="side-link" href="#llm"><span class="side-icon">✦</span>LLM Providers</a>
+      <a class="side-link" href="#runtime"><span class="side-icon">▣</span>Runtime & Deployments</a>
+      <a class="side-link" href="#queues"><span class="side-icon">≋</span>Queues & Jobs<span class="side-badge" id="admin-queues-badge" hidden></span></a>
+      <a class="side-link" href="#audit"><span class="side-icon">◷</span>Audit Logs</a>
+      <a class="side-link" href="#settings"><span class="side-icon">⚙</span>System Settings</a>
+    </nav>
+    <div class="app-user"><span class="avatar" style="background:var(--green)">A</span><span class="user-meta"><strong>Admin platform</strong><span>Restricted role</span></span></div>
+  </aside>
+  <div class="app-main">
+    <header class="app-topbar"><div style="display:flex;align-items:center;gap:12px"><button class="icon-button mobile-side-toggle" data-demo-action="sidebar" aria-label="Buka menu">☰</button><p class="crumb">Admin / <strong>Dashboard</strong></p></div><div class="top-actions"><span class="tag">RBAC enforced</span><button class="icon-button" aria-label="Notifikasi">◔</button><a class="icon-button" href="/" aria-label="Kembali ke landing page">↗</a></div></header>
+    <main class="app-content">
+      <div class="page-heading"><div><h1>Platform control plane.</h1><p>Ringkasan operasi tanpa membuka secret atau isi percakapan secara default. Semua operasi sensitif memiliki target, permission, dan audit.</p></div><div class="agent-status" id="admin-system-state"><i></i><span>Memuat status runtime…</span></div></div>
+      <div class="dashboard-grid">
+        <section class="panel agent-panel reveal"><div class="panel-head"><div><p class="panel-title">Platform health</p><p class="panel-note" id="admin-health-note">Memuat snapshot runtime…</p></div><span class="tag neutral" id="admin-health-tag">Live runtime</span></div><p class="agent-mainline">Jaga batasnya.<br /><span>Ukur hasilnya.</span></p><div class="agent-actions"><button class="pill pill-light" type="button" id="admin-health-refresh">Muat ulang runtime</button></div></section>
+        <section class="panel metric-panel reveal delay-1"><div class="panel-head"><div><p class="panel-title">User / agents</p><p class="panel-note">Agent terdaftar di runtime</p></div><span>◎</span></div><p class="big-metric" id="admin-metric-agents">—</p><p class="trend" id="admin-metric-agents-trend">Memuat…</p></section>
+        <section class="panel metric-panel reveal delay-2"><div class="panel-head"><div><p class="panel-title">Queue backlog</p><p class="panel-note">Job queued (semua agent)</p></div><span>≋</span></div><p class="big-metric" id="admin-metric-queue">—</p><p class="trend" id="admin-metric-queue-trend" style="color:var(--warning)">Memuat…</p></section>
+        <section class="panel reveal delay-1" id="repliz">
+          <div class="panel-head">
+            <div>
+              <p class="panel-title">Repliz Integration & API Key</p>
+              <p class="panel-note">Konfigurasi manual kredensial Repliz · Status saat ini: Kosong</p>
+            </div>
+            <span class="tag neutral" id="repliz-badge-status">Kosong (Belum Diatur)</span>
+          </div>
+
+          <form id="form-repliz-key" style="margin-bottom:18px" onsubmit="return false">
+            <div class="form-field" style="margin-top:0">
+              <label for="input-repliz-key" style="display:flex;justify-content:space-between;font-size:11px;font-weight:600">
+                <span>Repliz API Key / Secret Token</span>
+                <span style="font-weight:400;color:var(--muted)">Input manual</span>
+              </label>
+              <div style="display:flex;gap:8px">
+                <input id="input-repliz-key" type="password" placeholder="Belum ada API Key (masukkan di sini)…" value="" style="flex:1" autocomplete="off" />
+                <button type="button" class="pill pill-light" id="btn-toggle-repliz-vis" style="min-height:42px;padding:0 14px;font-size:11px">Lihat</button>
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="input-repliz-workspace" style="font-size:11px;font-weight:600">Repliz Workspace ID / Endpoint</label>
+              <input id="input-repliz-workspace" type="text" placeholder="Contoh: ws_repliz_01 (opsional)" value="" />
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:8px;flex-wrap:wrap">
+              <button type="button" class="pill pill-light" id="btn-clear-repliz" style="min-height:36px;padding:6px 14px;font-size:11px;color:var(--danger)">Kosongkan Kredensial</button>
+              <button type="button" class="pill pill-dark" id="btn-save-repliz" style="min-height:36px;padding:6px 16px;font-size:11.5px">Simpan Kredensial ↗</button>
+            </div>
+          </form>
+
+          <div class="account-list">
+            <div class="account-row"><span class="platform-dot">R</span><span class="account-info"><strong>Status Kredensial API</strong><span id="repliz-info-sub">Belum ada API Key aktif (kredensial kosong)</span></span><span class="account-state" id="repliz-info-state" style="color:var(--warning)">Standby (Kosong)</span></div>
+            <div class="account-row"><span class="platform-dot" style="background:var(--pink)">↕</span><span class="account-info"><strong>Account discovery</strong><span>Sync aktif setelah API Key diinput</span></span><span class="account-state" style="color:var(--muted)">Menunggu Key</span></div>
+            <div class="account-row"><span class="platform-dot" style="background:var(--pink-alt)">!</span><span class="account-info"><strong>Capabilities</strong><span>Koneksi endpoint platform</span></span><span class="capability-state locked">Terkunci</span></div>
+          </div>
+        </section>
+        <section class="panel reveal delay-2" id="runtime"><div class="panel-head"><div><p class="panel-title">Runtime & deployments</p><p class="panel-note">Distribusi status agent live per status_desired/actual dari GET /api/admin/agents.</p></div><a class="panel-link" href="#users">Manage</a></div><div class="capability-list" id="admin-runtime-list"><p class="panel-note">Memuat status runtime…</p></div></section>
+      </div>
+      <section class="panel table-panel reveal" id="waitinglist"><div class="panel-head"><div><p class="panel-title">Waiting List Leads (Early Access & Blueprint)</p><p class="panel-note">Database prospek dan pendaftar E-Book Blueprint secara real-time dari tabel SQLite hermes.sqlite.</p></div><div style="display:flex;gap:8px"><span class="tag">Database Live</span><button class="pill pill-light" type="button" id="btn-admin-export-wl">Refresh Leads</button></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Nama Lengkap</th><th>Email</th><th>WhatsApp</th><th>Kategori</th><th>Platform</th><th>Kode Referral</th><th>Waktu Daftar</th></tr></thead><tbody id="admin-wl-table-body"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">Memuat data waiting list…</td></tr></tbody></table></div></section>
+      <section class="panel table-panel reveal" id="users"><div class="panel-head"><div><p class="panel-title">Users & Agents</p><p class="panel-note">Metadata dan safe error saja. Isi chat, prompt, memori, dan payload social tetap dibatasi serta diaudit.</p></div><div style="display:flex;gap:8px;align-items:center"><span class="tag neutral" id="admin-agents-tag">Live</span><button class="pill pill-light" type="button" id="admin-agents-refresh">Muat ulang</button></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>User</th><th>Agent</th><th>Desired / actual</th><th>Antrean</th><th>Last event</th><th>Aksi</th></tr></thead><tbody id="admin-agents-body"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">Memuat agent runtime…</td></tr></tbody></table></div></section>
+      <section class="panel table-panel" id="capabilities"><div class="panel-head"><div><p class="panel-title">Platform & Capabilities</p><p class="panel-note">Fitur tidak boleh aktif hanya karena nama endpoint ada di OpenAPI. Baris di bawah mengikuti capability runtime nyata.</p></div><span class="tag neutral">Live capability</span></div><div class="platform-list" id="admin-capabilities-list"><p class="panel-note">Memuat capability runtime…</p></div></section>
+      <section class="panel table-panel" id="queues"><div class="panel-head"><div><p class="panel-title">Queues & Jobs</p><p class="panel-note">Job report nyata dari tabel agent_jobs: retry maksimal 3x, lalu dead-letter dan bisa di-requeue admin.</p></div><span class="tag neutral" id="admin-queues-tag">Live</span></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Job</th><th>Tipe</th><th>Status</th><th>Attempts</th><th>Dibuat</th><th>Selesai</th><th>Catatan</th></tr></thead><tbody id="admin-jobs-body"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">Memuat antrean job…</td></tr></tbody></table></div></section>
+      <section class="panel table-panel" id="audit"><div class="panel-head"><div><p class="panel-title">Audit Logs</p><p class="panel-note">Actor, action, target, dan detail aman dari tabel agent_events. Handler audit tidak pernah menyimpan handle, email, atau isi percakapan.</p></div><button class="pill pill-light" type="button" id="admin-audit-refresh">Refresh log</button></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Event</th><th>Aktor</th><th>Aksi</th><th>Target</th><th>Detail</th><th>Waktu</th></tr></thead><tbody id="admin-audit-body"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">Memuat audit log…</td></tr></tbody></table></div></section>
+      <section class="panel table-panel" id="llm"><div class="panel-head"><div><p class="panel-title">LLM Providers</p><p class="panel-note">Metadata provider server-managed. API key dan base URL tidak pernah dikirim ke dashboard.</p></div><span class="tag neutral">Metadata only</span></div><div class="platform-list" id="admin-llm-list"><p class="panel-note">Memuat metadata LLM…</p></div></section>
+      <section class="panel table-panel" id="settings"><div class="panel-head"><div><p class="panel-title">System Settings</p><p class="panel-note">Fakta operasional runtime Hermes. Hanya nilai yang benar-benar berlaku di agent-runtime.mjs.</p></div><span class="tag neutral">Server-managed</span></div><div class="value-grid" style="grid-template-columns:repeat(3,1fr)"><div class="soft-card" style="min-height:145px;padding:18px"><span class="card-number">01</span><h3 style="margin:20px 0 5px;font-size:16px">Runtime tick</h3><p>Tick 5 detik. Job yang macet di status running lebih dari 5 menit dikembalikan ke queue oleh reaper.</p></div><div class="soft-card" style="min-height:145px;padding:18px;background:var(--green)"><span class="card-number">02</span><h3 style="margin:20px 0 5px;font-size:16px">Dead-letter</h3><p>Job gagal dicoba ulang maksimal 3 kali dengan error terpotong; setelah itu status failed dan hanya bisa dikembalikan lewat requeue admin.</p></div><div class="soft-card" style="min-height:145px;padding:18px"><span class="card-number">03</span><h3 style="margin:20px 0 5px;font-size:16px">Report mingguan</h3><p>Satu job scheduled_report per ISO week strftime('%G-W%V') dengan INSERT OR IGNORE, untuk agent aktif yang capability report-nya nyala. Manual report kapan saja.</p></div><div class="soft-card" style="min-height:145px;padding:18px"><span class="card-number">04</span><h3 style="margin:20px 0 5px;font-size:16px">Rate limit chat</h3><p>20 pesan per menit per user, maksimal 2 percakapan berjalan sekaligus. 429 membawa Retry-After 60 detik.</p></div><div class="soft-card" style="min-height:145px;padding:18px"><span class="card-number">05</span><h3 style="margin:20px 0 5px;font-size:16px">Timeout LLM</h3><p>Satu panggilan chat dibatasi 90 detik (max_tokens 500, konteks 12 pesan terakhir), error hanya dari kode tertutup.</p></div><div class="soft-card" style="min-height:145px;padding:18px;background:var(--pink)"><span class="card-number">06</span><h3 style="margin:20px 0 5px;font-size:16px">Retensi</h3><p>Tidak ada penghapusan otomatis untuk pesan, job, dan audit (retensi unlimited). Baris hanya hilang lewat cascade saat agent atau user dihapus.</p></div></div></section>
+    </main>
+  </div>
+</div><div class="toast" aria-live="polite"></div><script src="/app.js" defer></script>
+</body></html>
